@@ -1,1455 +1,1860 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday Bestie!</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            overflow: hidden;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .page {
-            width: 100vw;
-            height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-            padding: 20px;
-        }
-
-        .page.active {
-            opacity: 1;
-        }
-
-        /* Page 1 Styles */
-        .page1 {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
-            background-size: 400% 400%;
-            animation: gradientShift 4s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .main-heading {
-            font-size: clamp(2.5rem, 8vw, 6rem);
-            color: white;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-            margin-bottom: 2rem;
-            text-align: center;
-            z-index: 10;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-30px); }
-            60% { transform: translateY(-15px); }
-        }
-
-        /* Page 2 Styles */
-        .page2 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        /* Slideshow container for page 2 */
-        .slideshow-container {
-            position: relative;
-            width: 90%;
-            max-width: 1000px;
-            margin: 2rem auto;
-            z-index: 10;
-        }
-
-        .slideshow-title {
-            color: white;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            text-align: center;
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            animation: fadeInUp 1s ease-out;
-        }
-
-        /* Train pattern container */
-        .train-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            perspective: 1000px;
-        }
-
-        .train-car {
-            width: 200px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateX(-100px) rotateY(-20deg);
-            transition: all 0.8s ease;
-            position: relative;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            backdrop-filter: blur(5px);
-        }
-
-        .train-car.visible {
-            opacity: 1;
-            transform: translateX(0) rotateY(0deg);
-        }
-
-        .train-car img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .train-car:hover img {
-            transform: scale(1.1);
-        }
-
-        .train-car::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 10px;
-            background: #ffd700;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-
-        .train-car::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 20%;
-            width: 60%;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-        }
-
-        /* Memory caption */
-        .memory-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px;
-            font-size: 0.9rem;
-            text-align: center;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .train-car:hover .memory-caption {
-            transform: translateY(0);
-        }
-
-        /* Slideshow progress bar */
-        .progress-container {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            margin: 2rem 0;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #ffd700, #ff6b6b);
-            border-radius: 2px;
-            width: 0%;
-            animation: progressFill 16s linear;
-        }
-
-        @keyframes progressFill {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        /* Train track decoration */
-        .train-track {
-            position: absolute;
-            bottom: 100px;
-            left: 0;
-            right: 0;
-            height: 8px;
-            background: repeating-linear-gradient(
-                90deg,
-                #8B4513 0px,
-                #8B4513 20px,
-                transparent 20px,
-                transparent 40px
-            );
-            z-index: 1;
-        }
-
-        .train-track::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #666;
-            transform: translateY(-50%);
-        }
-
-        /* Page 3 Styles */
-        .page3 {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        /* Split layout for page 3 */
-        .split-container {
-            display: flex;
-            width: 100%;
-            max-width: 1200px;
-            min-height: 80vh;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-        }
-
-        .split-left {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            position: relative;
-        }
-
-        .split-right {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            position: relative;
-        }
-
-        /* Big picture styling */
-        .big-picture {
-            width: 100%;
-            max-width: 450px;
-            height: 60vh;
-            min-height: 300px;
-            border-radius: 25px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            position: relative;
-            transition: transform 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            margin: 0 auto;
-        }
-
-        .big-picture:hover {
-            transform: scale(1.02);
-        }
-
-        .big-picture img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .big-picture::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(240,147,251,0.1), rgba(245,87,108,0.1));
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Full paragraph styling */
-        .full-para {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 30px;
-            color: white;
-            font-size: clamp(1rem, 2.5vw, 1.4rem);
-            line-height: 1.8;
-            text-align: center;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            animation: fadeInRight 1.2s ease-out;
-            width: 100%;
-            max-width: 500px;
-            position: relative;
-            overflow: hidden;
-            margin: 0 auto;
-        }
-
-        .full-para::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: shimmer 6s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        @keyframes shimmer {
-            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-            50% { transform: translate(-50%, -50%) rotate(180deg); }
-        }
-
-        @keyframes fadeInRight {
-            from { 
-                opacity: 0; 
-                transform: translateX(50px); 
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <title>Happy Birthday Bestie!</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
-            to { 
-                opacity: 1; 
-                transform: translateX(0); 
+
+            body {
+                font-family: "Comic Sans MS", cursive, sans-serif;
+                overflow-x: hidden; /* Only hide horizontal scroll */
+                cursor: pointer;
+                user-select: none;
+                position: relative;
+                min-height: 100vh;
+                margin: 0;
             }
-        }
 
-        .big-picture {
-            animation: fadeInLeft 1.2s ease-out;
-        }
-
-        @keyframes fadeInLeft {
-            from { 
-                opacity: 0; 
-                transform: translateX(-50px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateX(0); 
-            }
-        }
-
-        /* Page 4 Styles */
-        .page4 {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        /* Top section with two pictures */
-        .top-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 1000px;
-            margin-bottom: 3rem;
-            gap: 40px;
-            z-index: 10;
-        }
-
-        .picture-container {
-            position: relative;
-            width: 300px;
-            height: 250px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
-            animation: pictureFloat 1s ease-out;
-        }
-
-        .picture-container:hover {
-            transform: translateY(-5px);
-        }
-
-        .picture-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .picture-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-
-        /* Connecting line between pictures */
-        .connecting-line {
-            position: relative;
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, #ffd700, #ff6b6b, #4facfe);
-            border-radius: 2px;
-            animation: lineGrow 1.5s ease-out;
-        }
-
-        .connecting-line::before {
-            content: '💫';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-
-        @keyframes pictureFloat {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes lineGrow {
-            from { width: 0; }
-            to { width: 100px; }
-        }
-
-        /* Before and After section */
-        .comparison-section {
-            width: 100%;
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            animation: fadeInUp 1.2s ease-out 0.5s both;
-            z-index: 10;
-            margin: 0 auto;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .comparison-title {
-            color: white;
-            font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-            text-align: center;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .comparison-content {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
-            gap: 30px;
-            width: 100%;
-        }
-
-        .before-section, .after-section {
-            flex: 1;
-            text-align: center;
-            max-width: 300px;
-        }
-
-        .section-header {
-            color: #ffd700;
-            font-size: clamp(1.2rem, 2.8vw, 1.6rem);
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-
-        .trait-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .trait-item {
-            background: rgba(255, 255, 255, 0.15);
-            margin: 0.8rem 0;
-            padding: 15px;
-            border-radius: 12px;
-            color: white;
-            font-size: clamp(0.85rem, 2vw, 1.1rem);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            border-left: 4px solid #ffd700;
-            transition: all 0.3s ease;
-            text-align: left;
-        }
-
-        .trait-item:hover {
-            transform: translateX(8px);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .vs-divider {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            min-width: 100px;
-            padding: 0 15px;
-        }
-
-        .vs-text {
-            background: linear-gradient(45deg, #ffd700, #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .heart-icon {
-            font-size: 1.5rem;
-            animation: heartBeat 2s ease-in-out infinite;
-        }
-
-        @keyframes heartBeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        /* Page 5 Styles */
-        .page5 {
-            background: #000;
-            position: relative;
-            overflow: hidden; /* Prevent content from spilling outside */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .video-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Changed to contain to ensure the video fits completely */
-            max-height: 100vh; /* Ensure it doesn't exceed viewport height */
-            margin: 0 auto;
-            z-index: 1;
-            background: #000;
-            filter: blur(1px); /* Reduced blur for better visibility */
-        }
-        
-        /* Fallback for video */
-        .page5.video-fallback {
-            background: linear-gradient(45deg, #667eea, #764ba2) !important;
-        }
-
-        .moving-quote {
-            position: absolute;
-            top: 50%;
-            left: 100%;
-            transform: translateY(-50%);
-            color: white;
-            font-size: clamp(1.5rem, 4vw, 3rem);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-            white-space: nowrap;
-            z-index: 10;
-            animation: moveQuote 25s linear infinite;
-            padding: 15px 25px;
-            background: rgba(0,0,0,0.5); /* Darkened for better visibility */
-            border-radius: 50px;
-            backdrop-filter: blur(3px);
-            max-width: 100%; /* Prevent overflow */
-            box-sizing: border-box;
-        }
-
-        @keyframes moveQuote {
-            from { left: 100%; }
-            to { left: -150%; }
-        }
-
-        /* Photo Grid Styles */
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 90%;
-            margin: 2rem auto;
-            z-index: 10;
-            justify-items: center;
-        }
-
-        /* Special styling for page 1 photo grid */
-        .page1 .photo-grid {
-            grid-template-columns: repeat(3, 1fr);
-            max-width: 95%;
-            gap: 20px;
-        }
-
-        .photo-item {
-            width: 100%;
-            height: 120px;
-            background: linear-gradient(45deg, #4facfe, #00f2fe);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
-            animation: photoFadeIn 0.8s ease forwards;
-            opacity: 0;
-        }
-
-        /* Bigger photos for page 1 */
-        .page1 .photo-item {
-            height: 180px;
-            border-radius: 20px;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.3);
-        }
-
-        .photo-item:hover {
-            transform: scale(1.05);
-        }
-
-        .photo-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        @keyframes photoFadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Emoji Animation Styles */
-        .emoji {
-            position: absolute;
-            font-size: 3rem;
-            z-index: 5;
-            animation: emojiPop 3s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes emojiPop {
-            0% { 
-                transform: scale(0) rotate(0deg);
+            .page {
+                width: 100%;
+                min-height: 100vh;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
                 opacity: 0;
-            }
-            20% { 
-                transform: scale(1.2) rotate(180deg);
-                opacity: 1;
-            }
-            80% { 
-                transform: scale(1) rotate(360deg);
-                opacity: 1;
-            }
-            100% { 
-                transform: scale(0) rotate(540deg);
-                opacity: 0;
-            }
-        }
-
-        /* Friendship Quote Styles */
-        .friendship-quote {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: clamp(1rem, 3vw, 1.5rem);
-            text-align: center;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            max-width: 90%;
-            z-index: 10;
-            animation: fadeInUp 1s ease-out;
-            background: rgba(0,0,0,0.2);
-            padding: 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            width: 90%;
-        }
-        
-        /* Custom style for page4 quote */
-        .page4 .friendship-quote {
-            position: relative;
-            bottom: auto;
-            left: auto;
-            transform: none;
-            width: 90%;
-            margin: 40px auto 20px auto;
-            animation: fadeIn 1s ease-out;
-        }
-
-        /* Special friendship paragraph for page 1 */
-        .friendship-para {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 25px 30px;
-            margin: 2rem auto;
-            color: white;
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            text-align: center;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-            max-width: 90%;
-            z-index: 10;
-            animation: fadeInUp 1.5s ease-out;
-            line-height: 1.7;
-            box-shadow: 0 10px 35px rgba(0,0,0,0.15);
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(30px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        
-        /* Fix for animations that don't need translateX */
-        .friendship-para, .comparison-section, .big-picture, .full-para {
-            animation-name: fadeIn;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Page Counter */
-        .page-counter {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 1.2rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            z-index: 100;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .photo-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                max-width: 95%;
-            }
-            
-            .page1 .photo-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            
-            .photo-item {
-                height: 100px;
-            }
-            
-            .page1 .photo-item {
-                height: 140px;
-            }
-            
-            .emoji {
-                font-size: 2rem;
-            }
-            
-            .friendship-quote {
-                font-size: 1rem;
-                bottom: 20px;
-            }
-            
-            .friendship-para {
+                transition: opacity 0.8s ease-in-out;
                 padding: 20px;
-                font-size: 1rem;
-                margin: 1.5rem 0;
             }
-            
-            .train-car {
-                width: 150px;
-                height: 120px;
+
+            .page.active {
+                opacity: 1;
             }
-            
+
+            /* Page 1 Styles */
+            .page1 {
+                background: linear-gradient(
+                    45deg,
+                    #ff6b6b,
+                    #4ecdc4,
+                    #45b7d1,
+                    #96ceb4,
+                    #feca57
+                );
+                background-size: 400% 400%;
+                animation: gradientShift 4s ease infinite;
+            }
+
+            @keyframes gradientShift {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+
+            .main-heading {
+                font-size: clamp(2.5rem, 8vw, 6rem);
+                color: white;
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+                margin-bottom: 2rem;
+                text-align: center;
+                z-index: 10;
+                animation: bounce 2s infinite;
+            }
+
+            @keyframes bounce {
+                0%,
+                20%,
+                50%,
+                80%,
+                100% {
+                    transform: translateY(0);
+                }
+                40% {
+                    transform: translateY(-30px);
+                }
+                60% {
+                    transform: translateY(-15px);
+                }
+            }
+
+            /* Page 2 Styles */
+            .page2 {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            /* Slideshow container for page 2 */
+            .slideshow-container {
+                position: relative;
+                width: 90%;
+                max-width: 1000px;
+                margin: 2rem auto;
+                z-index: 10;
+            }
+
             .slideshow-title {
-                font-size: 2rem;
-                margin-bottom: 1rem;
+                color: white;
+                font-size: clamp(2rem, 5vw, 3.5rem);
+                text-align: center;
+                margin-bottom: 2rem;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                animation: fadeInUp 1s ease-out;
             }
-            
+
+            /* Train pattern container */
             .train-container {
-                gap: 15px;
-            }
-            
-            /* Page 3 mobile styles */
-            .page3 {
-                flex-direction: column;
-                padding: 20px;
-                justify-content: flex-start;
-            }
-            
-            .split-container {
-                flex-direction: column;
-                height: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-wrap: wrap;
                 gap: 20px;
-                min-height: unset;
+                perspective: 1000px;
             }
-            
-            .split-left, .split-right {
-                padding: 15px;
+
+            .train-car {
+                width: 200px;
+                height: 150px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 15px;
+                overflow: hidden;
+                opacity: 0;
+                transform: translateX(-100px) rotateY(-20deg);
+                transition: all 0.8s ease;
+                position: relative;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(5px);
+            }
+
+            .train-car.visible {
+                opacity: 1;
+                transform: translateX(0) rotateY(0deg);
+            }
+
+            .train-car img {
                 width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
             }
-            
-            .big-picture {
-                height: 40vh;
-                min-height: 250px;
-                max-width: 90%;
+
+            .train-car:hover img {
+                transform: scale(1.1);
+            }
+
+            .train-car::before {
+                content: "";
+                position: absolute;
+                top: -5px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 30px;
+                height: 10px;
+                background: #ffd700;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            }
+
+            .train-car::after {
+                content: "";
+                position: absolute;
+                bottom: -10px;
+                left: 20%;
+                width: 60%;
+                height: 4px;
+                background: #333;
+                border-radius: 2px;
+            }
+
+            /* Memory caption */
+            .memory-caption {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 8px;
+                font-size: 0.9rem;
+                text-align: center;
+                transform: translateY(100%);
+                transition: transform 0.3s ease;
+            }
+
+            .train-car:hover .memory-caption {
+                transform: translateY(0);
+            }
+
+            /* Slideshow progress bar */
+            .progress-container {
                 width: 100%;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 2px;
+                margin: 2rem 0;
+                overflow: hidden;
             }
-            
-            .full-para {
-                padding: 25px;
-                font-size: 1rem;
-                max-width: 90%;
-                width: 100%;
+
+            .progress-bar {
+                height: 100%;
+                background: linear-gradient(90deg, #ffd700, #ff6b6b);
+                border-radius: 2px;
+                width: 0%;
+                animation: progressFill 16s linear;
             }
-            
-            /* Page 4 mobile styles */
-            .page4 {
-                padding: 20px 15px;
+
+            @keyframes progressFill {
+                0% {
+                    width: 0%;
+                }
+                100% {
+                    width: 100%;
+                }
             }
-            
-            .top-section {
+
+            /* Train track decoration */
+            .train-track {
+                position: absolute;
+                bottom: 100px;
+                left: 0;
+                right: 0;
+                height: 8px;
+                background: repeating-linear-gradient(
+                    90deg,
+                    #8b4513 0px,
+                    #8b4513 20px,
+                    transparent 20px,
+                    transparent 40px
+                );
+                z-index: 1;
+            }
+
+            .train-track::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: #666;
+                transform: translateY(-50%);
+            }
+
+            /* Page 3 Styles */
+            .page3 {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
                 flex-direction: column;
-                gap: 15px;
-                margin-bottom: 2.5rem;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
             }
-            
-            .picture-container {
-                width: 280px;
-                height: 220px;
+
+            /* Split layout for page 3 */
+            .split-container {
+                display: flex;
+                width: 100%;
+                max-width: 1200px;
+                min-height: 80vh;
+                align-items: center;
+                justify-content: center;
+                gap: 30px;
             }
-            
-            .connecting-line {
-                width: 60px;
-                transform: rotate(90deg);
+
+            .split-left {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px;
+                position: relative;
             }
-            
-            .comparison-section {
-                padding: 20px 15px;
-                max-width: 95%;
+
+            .split-right {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px;
+                position: relative;
+            }
+
+            /* Big picture styling */
+            .big-picture {
+                width: 100%;
+                max-width: 450px;
+                height: 60vh;
+                min-height: 300px;
+                border-radius: 25px;
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                position: relative;
+                transition: transform 0.3s ease;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(255, 255, 255, 0.2);
                 margin: 0 auto;
             }
-            
-            .comparison-content {
+
+            .big-picture:hover {
+                transform: scale(1.02);
+            }
+
+            .big-picture img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .big-picture::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(
+                    45deg,
+                    rgba(240, 147, 251, 0.1),
+                    rgba(245, 87, 108, 0.1)
+                );
+                z-index: 1;
+                pointer-events: none;
+            }
+
+            /* Full paragraph styling */
+            .full-para {
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(15px);
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                border-radius: 25px;
+                padding: 30px;
+                color: white;
+                font-size: clamp(1rem, 2.5vw, 1.4rem);
+                line-height: 1.8;
+                text-align: center;
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+                animation: fadeInRight 1.2s ease-out;
+                width: 100%;
+                max-width: 500px;
+                position: relative;
+                overflow: hidden;
+                margin: 0 auto;
+            }
+
+            .full-para::before {
+                content: "";
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(
+                    circle,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    transparent 70%
+                );
+                animation: shimmer 6s ease-in-out infinite;
+                pointer-events: none;
+            }
+
+            @keyframes shimmer {
+                0%,
+                100% {
+                    transform: translate(-50%, -50%) rotate(0deg);
+                }
+                50% {
+                    transform: translate(-50%, -50%) rotate(180deg);
+                }
+            }
+
+            @keyframes fadeInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .big-picture {
+                animation: fadeInLeft 1.2s ease-out;
+            }
+
+            @keyframes fadeInLeft {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            /* Page 4 Styles */
+            .page4 {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
                 flex-direction: column;
-                gap: 20px;
+                justify-content: flex-start;
+                align-items: center;
+                padding: 40px 20px;
+            }
+
+            /* Top section with two pictures */
+            .top-section {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                max-width: 1000px;
+                margin-bottom: 3rem;
+                gap: 40px;
+                z-index: 10;
+            }
+
+            .picture-container {
+                position: relative;
+                width: 300px;
+                height: 250px;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                transition: transform 0.3s ease;
+                animation: pictureFloat 1s ease-out;
+            }
+
+            .picture-container:hover {
+                transform: translateY(-5px);
+            }
+
+            .picture-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .picture-label {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 10px;
+                text-align: center;
+                font-size: 1.1rem;
+                font-weight: bold;
+            }
+
+            /* Connecting line between pictures */
+            .connecting-line {
+                position: relative;
+                width: 100px;
+                height: 4px;
+                background: linear-gradient(90deg, #ffd700, #ff6b6b, #4facfe);
+                border-radius: 2px;
+                animation: lineGrow 1.5s ease-out;
+            }
+
+            .connecting-line::before {
+                content: "💫";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            @keyframes pictureFloat {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes lineGrow {
+                from {
+                    width: 0;
+                }
+                to {
+                    width: 100px;
+                }
+            }
+
+            /* Before and After section */
+            .comparison-section {
+                width: 100%;
+                max-width: 800px;
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(15px);
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                border-radius: 25px;
+                padding: 30px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                animation: fadeInUp 1.2s ease-out 0.5s both;
+                z-index: 10;
+                margin: 0 auto;
+                position: relative;
+                display: flex;
+                flex-direction: column;
                 align-items: center;
             }
-            
-            .vs-divider {
-                order: 1;
-                flex-direction: row;
-                margin: 15px 0;
-                width: 100%;
+
+            .comparison-title {
+                color: white;
+                font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+                text-align: center;
+                margin-bottom: 1.5rem;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .comparison-content {
+                display: flex;
                 justify-content: center;
-            }
-            
-            .before-section, .after-section {
+                align-items: stretch;
+                gap: 30px;
                 width: 100%;
             }
-            
+
+            .before-section,
+            .after-section {
+                flex: 1;
+                text-align: center;
+                max-width: 300px;
+            }
+
+            .section-header {
+                color: #ffd700;
+                font-size: clamp(1.2rem, 2.8vw, 1.6rem);
+                font-weight: bold;
+                margin-bottom: 1rem;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            }
+
+            .trait-list {
+                list-style: none;
+                padding: 0;
+            }
+
             .trait-item {
-                padding: 12px;
-                font-size: 0.9rem;
-                margin: 0.5rem 0;
+                background: rgba(255, 255, 255, 0.15);
+                margin: 0.8rem 0;
+                padding: 15px;
+                border-radius: 12px;
+                color: white;
+                font-size: clamp(0.85rem, 2vw, 1.1rem);
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+                border-left: 4px solid #ffd700;
+                transition: all 0.3s ease;
                 text-align: left;
             }
-        }
 
-        @media (max-width: 480px) {
-            .photo-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .trait-item:hover {
+                transform: translateX(8px);
+                background: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             }
-            
-            .page1 .photo-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .photo-item {
-                height: 80px;
-            }
-            
-            .page1 .photo-item {
-                height: 120px;
-            }
-            
-            .friendship-para {
-                padding: 15px;
-                font-size: 0.9rem;
-            }
-            
-            .train-car {
-                width: 120px;
-                height: 100px;
-            }
-            
-            .train-container {
-                gap: 10px;
-            }
-            
-            /* Page 3 small mobile styles */
-            .big-picture {
-                height: 35vh;
-                min-height: 200px;
-                width: 100%;
-            }
-            
-            .full-para {
-                padding: 20px;
-                font-size: 0.95rem;
-                width: 100%;
-            }
-            
-            /* Page 4 small mobile styles */
-            .top-section {
+
+            .vs-divider {
+                display: flex;
                 flex-direction: column;
-                gap: 25px;
-                margin-bottom: 2rem;
                 align-items: center;
+                justify-content: center;
+                gap: 12px;
+                min-width: 100px;
+                padding: 0 15px;
             }
-            
-            .picture-container {
-                width: 280px;
-                height: 220px;
+
+            .vs-text {
+                background: linear-gradient(45deg, #ffd700, #ff6b6b);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-size: clamp(1.8rem, 4vw, 2.5rem);
+                font-weight: bold;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .heart-icon {
+                font-size: 1.5rem;
+                animation: heartBeat 2s ease-in-out infinite;
+            }
+
+            @keyframes heartBeat {
+                0%,
+                100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.2);
+                }
+            }
+
+            /* Page 5 Styles */
+            .page5 {
+                background: #000;
+                position: relative;
+                overflow: hidden; /* Prevent content from spilling outside */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh; /* Ensure it takes full height */
+            }
+
+            .video-background {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: contain; /* Changed to contain to ensure the video fits completely */
+                max-height: 100vh; /* Ensure it doesn't exceed viewport height */
                 margin: 0 auto;
+                z-index: 1;
+                background: #000;
+                filter: blur(1px); /* Reduced blur for better visibility */
             }
-            
-            .connecting-line {
-                width: 80px;
-                transform: rotate(90deg);
+
+            /* Fallback for video */
+            .page5.video-fallback {
+                background: linear-gradient(45deg, #667eea, #764ba2) !important;
             }
-            
-            .comparison-section {
-                padding: 25px 15px;
+
+            .moving-quote {
+                position: absolute;
+                top: 50%;
+                left: 100%;
+                transform: translateY(-50%);
+                color: white;
+                font-size: clamp(1.5rem, 4vw, 3rem);
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+                white-space: nowrap;
+                z-index: 10;
+                animation: moveQuote 25s linear infinite;
+                padding: 15px 25px;
+                background: rgba(
+                    0,
+                    0,
+                    0,
+                    0.5
+                ); /* Darkened for better visibility */
+                border-radius: 50px;
+                backdrop-filter: blur(3px);
+                max-width: 100%; /* Prevent overflow */
+                box-sizing: border-box;
+            }
+
+            @keyframes moveQuote {
+                from {
+                    left: 100%;
+                }
+                to {
+                    left: -150%;
+                }
+            }
+
+            /* Photo Grid Styles */
+            .photo-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                max-width: 90%;
+                margin: 2rem auto;
+                z-index: 10;
+                justify-items: center;
+            }
+
+            /* Special styling for page 1 photo grid */
+            .page1 .photo-grid {
+                grid-template-columns: repeat(3, 1fr);
                 max-width: 95%;
-                margin: 0 auto;
-            }
-            
-            .comparison-content {
-                flex-direction: column;
                 gap: 20px;
             }
-            
-            .vs-divider {
-                order: 2;
-                flex-direction: row;
-                margin: 15px 0;
-            }
-            
-            .trait-item {
-                padding: 10px;
-                font-size: 0.85rem;
-                margin: 0.5rem 0;
-            }
-            
-            /* Fixing video on mobile */
-            .video-background {
-                object-fit: contain;
-                max-height: 80vh;
+
+            .photo-item {
                 width: 100%;
+                height: 120px;
+                background: linear-gradient(45deg, #4facfe, #00f2fe);
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+                transition: transform 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                font-size: 0.9rem;
+                animation: photoFadeIn 0.8s ease forwards;
+                opacity: 0;
             }
-            
-            .moving-quote {
-                font-size: 1rem;
-                padding: 10px 15px;
+
+            /* Bigger photos for page 1 */
+            .page1 .photo-item {
+                height: 180px;
+                border-radius: 20px;
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
             }
-        }
-        
-        /* Additional video-specific fixes for very small screens */
-        @media (max-width: 400px) {
-            .video-background {
+
+            .photo-item:hover {
+                transform: scale(1.05);
+            }
+
+            .photo-item img {
                 width: 100%;
-                height: auto;
-                max-height: 75vh;
+                height: 100%;
+                object-fit: cover;
             }
-        }
-    </style>
-</head>
-<body>
-    <!-- Page Counter -->
-    <div class="page-counter">
-        <span id="current-page">1</span> / 5
-    </div>
 
-    <!-- Page 1: Opening Page -->
-    <div class="page page1 active" id="page1">
-        <h1 class="main-heading">Happy Birthday Bitch! 🎉</h1>
-        
-        <div class="friendship-para">
-            "True friendship isn't about being inseparable, it's about being separated and knowing nothing will change. From those innocent days in class 4 to this beautiful moment today, our bond has only grown stronger. You've been my partner in crime, my shoulder to cry on, and my biggest cheerleader. Through every laugh, every tear, and every adventure, you've made life so much brighter. Here's to celebrating not just your birthday, but the incredible friendship that has shaped who we are today! 💕✨"
-        </div>
-        
-        <div class="photo-grid">
-            <div class="photo-item" style="animation-delay: 0.1s;">
-                <img src="WhatsApp Image 2025-07-25 at 21.54.08_835f803d.jpg" alt="Memory 1" onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 1';">
-            </div>
-            <div class="photo-item" style="animation-delay: 0.2s;">
-                <img src="WhatsApp Image 2025-07-25 at 21.54.12_2d33248e.jpg" alt="Memory 2" onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 2';">
-            </div>
-            <div class="photo-item" style="animation-delay: 0.3s;">
-                <img src="WhatsApp Image 2025-07-25 at 21.54.12_8fc077e4.jpg" alt="Memory 3" onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 3';">
-            </div>
-            <div class="photo-item" style="animation-delay: 0.4s;">
-                <img src="WhatsApp Image 2025-07-25 at 21.54.12_718fdfe3.jpg" alt="Memory 4" onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 4';">
-            </div>
-            <div class="photo-item" style="animation-delay: 0.5s;">
-                <img src="WhatsApp Image 2025-07-25 at 21.54.13_281ac40a.jpg" alt="Memory 5" onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 5';">
-            </div>
-            <div class="photo-item" style="animation-delay: 0.6s;">
-                <img src="WhatsApp Image 2025-07-25 at 21.54.13_488033e9.jpg" alt="Memory 6" onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 6';">
-            </div>
-        </div>
-    </div>
-
-    <!-- Page 2: Friendship Memories -->
-    <div class="page page2" id="page2">
-        <div class="slideshow-container">
-            <h2 class="slideshow-title">Memory Train 🚂</h2>
-            <div class="slideshow-subtitle" style="color: white; text-align: center; margin-bottom: 2rem; font-size: clamp(1rem, 2.5vw, 1.4rem); text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-                "All aboard the friendship express! 🎫✨"
-            </div>
-            
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar-2"></div>
-            </div>
-            
-            <div class="train-container" id="train-container">
-                <div class="train-car" data-delay="0">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.14_5f9a5838.jpg" alt="Memory 7" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #ff6b6b, #4ecdc4)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 7</div>';">
-                    <div class="memory-caption">First Day Adventures</div>
-                </div>
-                <div class="train-car" data-delay="2000">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.14_6f0f1119.jpg" alt="Memory 8" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #45b7d1, #96ceb4)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 8</div>';">
-                    <div class="memory-caption">Lunchtime Giggles</div>
-                </div>
-                <div class="train-car" data-delay="4000">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.15_99d7dbf4.jpg" alt="Memory 9" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #feca57, #ff6b6b)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 9</div>';">
-                    <div class="memory-caption">Study Sessions</div>
-                </div>
-                <div class="train-car" data-delay="6000">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.08_835f803d.jpg" alt="Memory 10" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #4ecdc4, #45b7d1)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 10</div>';">
-                    <div class="memory-caption">Weekend Fun</div>
-                </div>
-                <div class="train-car" data-delay="8000">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.12_2d33248e.jpg" alt="Memory 11" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #96ceb4, #feca57)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 11</div>';">
-                    <div class="memory-caption">Secret Sharing</div>
-                </div>
-                <div class="train-car" data-delay="10000">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.12_8fc077e4.jpg" alt="Memory 12" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #ff6b6b, #96ceb4)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 12</div>';">
-                    <div class="memory-caption">Growing Together</div>
-                </div>
-                <div class="train-car" data-delay="12000">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.13_281ac40a.jpg" alt="Memory 13" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #45b7d1, #feca57)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 13</div>';">
-                    <div class="memory-caption">Forever Friends</div>
-                </div>
-                <div class="train-car" data-delay="14000">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.14_5f9a5838.jpg" alt="Memory 14" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #4ecdc4, #ff6b6b)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 14</div>';">
-                    <div class="memory-caption">Unbreakable Bond</div>
-                </div>
-            </div>
-            
-            <div class="train-track"></div>
-        </div>
-        
-        <div class="friendship-quote">
-            "bht log badle par tu nhi ...... bht ladai hui apne beech but our friendship stood strong!!!!👭"
-        </div>
-    </div>
-
-    <!-- Page 3: More Memories -->
-    <div class="page page3" id="page3">
-        <div class="split-container">
-            <div class="split-left">
-                <div class="big-picture">
-                    <img src="WhatsApp Image 2025-07-25 at 21.54.12_8fc077e4.jpg" alt="Special Memory" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #f093fb, #f5576c)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:2rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);&quot;>Our Special Memory 💕</div>';">
-                </div>
-            </div>
-            
-            <div class="split-right">
-                <div class="full-para">
-                    From the silly selfies we took in class 4 to the countless adventures we've shared since then, every single moment has been a treasure. You've been there through my awkward phases, my biggest dreams, my worst days, and my happiest celebrations. Your friendship has been the constant thread weaving through all the chapters of my life.
-                    <br><br>
-                     woh din bhi kitne ache the jab apn hamesha sath rehete  the .... pata nhi kab aur kitni jaldi bade ho gayye... 🌟💖"
-                </div>
-            </div>
-        </div>
-        
-       
-    </div>
-
-    <!-- Page 4: Special Moments -->
-    <div class="page page4" id="page4">
-        <!-- Top section with two pictures -->
-        <div class="top-section">
-            <div class="picture-container" style="animation-delay: 0.2s;">
-                <img src="WhatsApp Image 2025-07-25 at 21.54.13_488033e9.jpg" alt="Class 4 Memory" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #4facfe, #00f2fe)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);&quot;>Class 4 Us 📚</div>';">
-                <div class="picture-label">Class 4 - The Beginning 📚</div>
-            </div>
-            
-            <div class="connecting-line"></div>
-            
-            <div class="picture-container" style="animation-delay: 0.4s;">
-                <img src="WhatsApp Image 2025-07-25 at 21.54.08_835f803d.jpg" alt="Present Day Memory" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #00f2fe, #4facfe)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);&quot;>Present Us 🌟</div>';">
-                <div class="picture-label">Present Day - Still Going Strong 🌟</div>
-            </div>
-        </div>
-        
-        <!-- Before and After comparison -->
-        <div class="comparison-section">
-            <h2 class="comparison-title">Our Journey: Then vs Now 💫</h2>
-            
-            <div class="comparison-content">
-                <div class="before-section">
-                    <h3 class="section-header">Class 4 Us 👶</h3>
-                    <ul class="trait-list">
-                        <li class="trait-item">🎒 poore din sath rehena</li>
-                        <li class="trait-item">📝 tik tok baane se</li>
-                        <li class="trait-item">🎮 gali mei khelne se leke</li>
-                        <li class="trait-item">😊 love percentage discuss karne se leke</li>
-                        <li class="trait-item">📚 tum dono hamesha sath hi rehete ho?</li>
-                    </ul>
-                </div>
-                
-                <div class="vs-divider">
-                    <div class="vs-text">VS</div>
-                    <div class="heart-icon">💕</div>
-                </div>
-                
-                <div class="after-section">
-                    <h3 class="section-header">Present Day Us 👸</h3>
-                    <ul class="trait-list">
-                        <li class="trait-item">☕ kabhi kabhi phone pe baat hona</li>
-                        <li class="trait-item">📱 website banane tak </li>
-                        <li class="trait-item">✈️ apne future ke sath khelne tak</li>
-                        <li class="trait-item">😂 love life discuss karne tak </li>
-                        <li class="trait-item">💪 tum dono kitne dino baad dikhi ek sath tak </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        
-        <div class="friendship-quote" style="position: relative; bottom: -30px; transform: none; left: auto; width: 90%; margin: 40px auto 20px auto;">
-            " time ke sath bht kuch badla hai but ek sath chugli karna is constant , ek doosre ko judge na karna is constant , ek  doosre ka sath dena is constant , ek doosre ke apne dushman manna is constant 🧸✨"
-        </div>
-    </div>
-
-    <!-- Page 5: Final Video Page -->
-    <div class="page page5" id="page5">
-        <video class="video-background" autoplay muted loop playsinline>
-            <source src="WhatsApp Video 2025-07-25 at 21.54.11_08e02b3f.mp4" type="video/mp4">
-            <!-- Fallback for video not loading -->
-        </video>
-        <div class="moving-quote">
-            "Happy Birthday bitch, tu sach mei bht wafadar hai tune kabhi sath nahi chora , mere hur ego , gusse ko hamesha ignore karke tune apni friendhip dekhi ........thank u bitch sabke ke liye 🎂🎉💕"
-        </div>
-    </div>
-
-    <script>
-        let currentPage = 1;
-        const totalPages = 5;
-        
-        // Emoji configurations for each page
-        const pageEmojis = {
-            1: ['🎉', '🌟', '✨', '🎂', '🎈', '💖'],
-            2: ['👭', '💕', '🌸', '🦋', '💝', '🌺'],
-            3: ['💫', '🌈', '🎀', '💐', '🌷', '🦄'],
-            4: ['🧸', '✨', '🎁', '💖', '🌙', '⭐'],
-            5: ['💕', '🎉', '✨', '💫', '🌟', '💖']
-        };
-
-        // Function to create and animate emojis
-        function createEmoji(pageNum) {
-            const emojis = pageEmojis[pageNum];
-            const emoji = document.createElement('div');
-            emoji.className = 'emoji';
-            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-            
-            // Random position
-            emoji.style.left = Math.random() * 90 + '%';
-            emoji.style.top = Math.random() * 90 + '%';
-            
-            // Random animation delay
-            emoji.style.animationDelay = Math.random() * 2 + 's';
-            
-            document.getElementById(`page${pageNum}`).appendChild(emoji);
-            
-            // Remove emoji after animation
-            setTimeout(() => {
-                if (emoji.parentNode) {
-                    emoji.parentNode.removeChild(emoji);
+            @keyframes photoFadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
                 }
-            }, 3000);
-        }
-
-        // Function to start emoji animation for a page
-        function startEmojiAnimation(pageNum) {
-            // Create initial emojis
-            for (let i = 0; i < 8; i++) {
-                setTimeout(() => createEmoji(pageNum), i * 400);
-            }
-            
-            // Continue creating emojis periodically
-            const emojiInterval = setInterval(() => {
-                if (currentPage === pageNum) {
-                    createEmoji(pageNum);
-                } else {
-                    clearInterval(emojiInterval);
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
                 }
-            }, 800);
-        }
+            }
 
-        // Function to start train slideshow on page 2
-        function startTrainSlideshow() {
-            const trainCars = document.querySelectorAll('#train-container .train-car');
-            const progressBar = document.getElementById('progress-bar-2');
-            
-            if (progressBar) {
-                progressBar.style.animation = 'progressFill 16s linear';
+            /* Emoji Animation Styles */
+            .emoji {
+                position: absolute;
+                font-size: 3rem;
+                z-index: 5;
+                animation: emojiPop 3s infinite;
+                pointer-events: none;
+            }
+
+            @keyframes emojiPop {
+                0% {
+                    transform: scale(0) rotate(0deg);
+                    opacity: 0;
+                }
+                20% {
+                    transform: scale(1.2) rotate(180deg);
+                    opacity: 1;
+                }
+                80% {
+                    transform: scale(1) rotate(360deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(0) rotate(540deg);
+                    opacity: 0;
+                }
+            }
+
+            /* Friendship Quote Styles */
+            .friendship-quote {
+                position: absolute;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                color: white;
+                font-size: clamp(1rem, 3vw, 1.5rem);
+                text-align: center;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                max-width: 90%;
+                z-index: 10;
+                animation: fadeInUp 1s ease-out;
+                background: rgba(0, 0, 0, 0.2);
+                padding: 15px;
+                border-radius: 15px;
+                backdrop-filter: blur(5px);
+                width: 90%;
+            }
+
+            /* Custom style for page4 quote */
+            .page4 .friendship-quote {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                width: 90%;
+                margin: 40px auto 20px auto;
+                animation: fadeIn 1s ease-out;
+            }
+
+            /* Special friendship paragraph for page 1 */
+            .friendship-para {
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 20px;
+                padding: 25px 30px;
+                margin: 2rem auto;
+                color: white;
+                font-size: clamp(1rem, 2.5vw, 1.3rem);
+                text-align: center;
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+                max-width: 90%;
+                z-index: 10;
+                animation: fadeInUp 1.5s ease-out;
+                line-height: 1.7;
+                box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+
+            /* Fix for animations that don't need translateX */
+            .friendship-para,
+            .comparison-section,
+            .big-picture,
+            .full-para {
+                animation-name: fadeIn;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Page Counter */
+            .page-counter {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                color: white;
+                font-size: 1.2rem;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+                z-index: 100;
+            }
+
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                .photo-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
+                    max-width: 95%;
+                }
+
+                .page1 .photo-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 15px;
+                }
+
+                .photo-item {
+                    height: 100px;
+                }
+
+                .page1 .photo-item {
+                    height: 140px;
+                }
+
+                .emoji {
+                    font-size: 2rem;
+                }
+
+                .friendship-quote {
+                    font-size: 1rem;
+                    bottom: 20px;
+                }
+
+                .friendship-para {
+                    padding: 20px;
+                    font-size: 1rem;
+                    margin: 1.5rem 0;
+                }
+
+                .train-car {
+                    width: 150px;
+                    height: 120px;
+                }
+
+                .slideshow-title {
+                    font-size: 2rem;
+                    margin-bottom: 1rem;
+                }
+
+                .train-container {
+                    gap: 15px;
+                }
+
+                /* Page 3 mobile styles */
+                .page3 {
+                    flex-direction: column;
+                    padding: 20px;
+                    justify-content: flex-start;
+                }
+
+                .split-container {
+                    flex-direction: column;
+                    height: auto;
+                    gap: 20px;
+                    min-height: unset;
+                }
+
+                .split-left,
+                .split-right {
+                    padding: 15px;
+                    width: 100%;
+                }
+
+                .big-picture {
+                    height: 40vh;
+                    min-height: 250px;
+                    max-width: 90%;
+                    width: 100%;
+                }
+
+                .full-para {
+                    padding: 25px;
+                    font-size: 1rem;
+                    max-width: 90%;
+                    width: 100%;
+                }
+
+                /* Page 4 mobile styles */
+                .page4 {
+                    padding: 20px 15px;
+                }
+
+                .top-section {
+                    flex-direction: column;
+                    gap: 15px;
+                    margin-bottom: 2.5rem;
+                }
+
+                .picture-container {
+                    width: 280px;
+                    height: 220px;
+                }
+
+                .connecting-line {
+                    width: 60px;
+                    transform: rotate(90deg);
+                }
+
+                .comparison-section {
+                    padding: 20px 15px;
+                    max-width: 95%;
+                    margin: 0 auto;
+                }
+
+                .comparison-content {
+                    flex-direction: column;
+                    gap: 20px;
+                    align-items: center;
+                }
+
+                .vs-divider {
+                    order: 1;
+                    flex-direction: row;
+                    margin: 15px 0;
+                    width: 100%;
+                    justify-content: center;
+                }
+
+                .before-section,
+                .after-section {
+                    width: 100%;
+                }
+
+                .trait-item {
+                    padding: 12px;
+                    font-size: 0.9rem;
+                    margin: 0.5rem 0;
+                    text-align: left;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .photo-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .page1 .photo-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .photo-item {
+                    height: 80px;
+                }
+
+                .page1 .photo-item {
+                    height: 120px;
+                }
+
+                .friendship-para {
+                    padding: 15px;
+                    font-size: 0.9rem;
+                }
+
+                .train-car {
+                    width: 120px;
+                    height: 100px;
+                }
+
+                .train-container {
+                    gap: 10px;
+                }
+
+                /* Page 3 small mobile styles */
+                .big-picture {
+                    height: 35vh;
+                    min-height: 200px;
+                    width: 100%;
+                }
+
+                .full-para {
+                    padding: 20px;
+                    font-size: 0.95rem;
+                    width: 100%;
+                }
+
+                /* Page 4 small mobile styles */
+                .top-section {
+                    flex-direction: column;
+                    gap: 25px;
+                    margin-bottom: 2rem;
+                    align-items: center;
+                }
+
+                .picture-container {
+                    width: 280px;
+                    height: 220px;
+                    margin: 0 auto;
+                }
+
+                .connecting-line {
+                    width: 80px;
+                    transform: rotate(90deg);
+                }
+
+                .comparison-section {
+                    padding: 25px 15px;
+                    max-width: 95%;
+                    margin: 0 auto;
+                }
+
+                .comparison-content {
+                    flex-direction: column;
+                    gap: 20px;
+                }
+
+                .vs-divider {
+                    order: 2;
+                    flex-direction: row;
+                    margin: 15px 0;
+                }
+
+                .trait-item {
+                    padding: 10px;
+                    font-size: 0.85rem;
+                    margin: 0.5rem 0;
+                }
+
+                /* Fixing video on mobile */
+                .video-background {
+                    object-fit: contain;
+                    max-height: 80vh;
+                    width: 100%;
+                }
+
+                .moving-quote {
+                    font-size: 1rem;
+                    padding: 10px 15px;
+                }
+            }
+
+            /* Additional video-specific fixes for very small screens */
+            @media (max-width: 400px) {
+                .video-background {
+                    width: 100%;
+                    height: auto;
+                    max-height: 75vh;
+                }
+                
+                /* Fix height issues on small screens */
+                .page {
+                    height: auto;
+                    min-height: 100vh;
+                    padding-bottom: 50px;
+                }
+                
+                /* Better touch target sizing for mobile */
+                .trait-item {
+                    padding: 12px 8px;
+                    margin: 10px 0;
+                }
+                
+                /* Ensure counter is visible */
+                .page-counter {
+                    background: rgba(0, 0, 0, 0.5);
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                }
             }
             
-            trainCars.forEach((car, index) => {
-                const delay = parseInt(car.getAttribute('data-delay'));
+            /* Fix for tall phones */
+            @media (max-height: 700px) {
+                .photo-item {
+                    height: 70px;
+                }
+                
+                .page1 .photo-item {
+                    height: 100px;
+                }
+                
+                .friendship-para {
+                    margin: 1rem auto;
+                    padding: 15px;
+                }
+                
+                .full-para {
+                    padding: 15px;
+                    margin: 10px auto;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Page Counter -->
+        <div class="page-counter"><span id="current-page">1</span> / 5</div>
+
+        <!-- Page 1: Opening Page -->
+        <div class="page page1 active" id="page1">
+            <h1 class="main-heading">Happy Birthday Bitch! 🎉</h1>
+
+            <div class="friendship-para">
+                "True friendship isn't about being inseparable, it's about being
+                separated and knowing nothing will change. From those innocent
+                days in class 4 to this beautiful moment today, our bond has
+                only grown stronger. You've been my partner in crime, my
+                shoulder to cry on, and my biggest cheerleader. Through every
+                laugh, every tear, and every adventure, you've made life so much
+                brighter. Here's to celebrating not just your birthday, but the
+                incredible friendship that has shaped who we are today! 💕✨"
+            </div>
+
+            <div class="photo-grid">
+                <div class="photo-item" style="animation-delay: 0.1s">
+                    <img
+                        src="WhatsApp Image 2025-07-25 at 21.54.08_835f803d.jpg"
+                        alt="Memory 1"
+                        onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 1';"
+                    />
+                </div>
+                <div class="photo-item" style="animation-delay: 0.2s">
+                    <img
+                        src="WhatsApp Image 2025-07-25 at 21.54.12_2d33248e.jpg"
+                        alt="Memory 2"
+                        onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 2';"
+                    />
+                </div>
+                <div class="photo-item" style="animation-delay: 0.3s">
+                    <img
+                        src="WhatsApp Image 2025-07-25 at 21.54.12_8fc077e4.jpg"
+                        alt="Memory 3"
+                        onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 3';"
+                    />
+                </div>
+                <div class="photo-item" style="animation-delay: 0.4s">
+                    <img
+                        src="WhatsApp Image 2025-07-25 at 21.54.12_718fdfe3.jpg"
+                        alt="Memory 4"
+                        onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 4';"
+                    />
+                </div>
+                <div class="photo-item" style="animation-delay: 0.5s">
+                    <img
+                        src="WhatsApp Image 2025-07-25 at 21.54.13_281ac40a.jpg"
+                        alt="Memory 5"
+                        onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 5';"
+                    />
+                </div>
+                <div class="photo-item" style="animation-delay: 0.6s">
+                    <img
+                        src="WhatsApp Image 2025-07-25 at 21.54.13_488033e9.jpg"
+                        alt="Memory 6"
+                        onerror="this.style.display='none'; this.parentElement.innerHTML='Photo 6';"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Friendship Memories -->
+        <div class="page page2" id="page2">
+            <div class="slideshow-container">
+                <h2 class="slideshow-title">Memory Train 🚂</h2>
+                <div
+                    class="slideshow-subtitle"
+                    style="
+                        color: white;
+                        text-align: center;
+                        margin-bottom: 2rem;
+                        font-size: clamp(1rem, 2.5vw, 1.4rem);
+                        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+                    "
+                >
+                    "All aboard the friendship express! 🎫✨"
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar-2"></div>
+                </div>
+
+                <div class="train-container" id="train-container">
+                    <div class="train-car" data-delay="0">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.14_5f9a5838.jpg"
+                            alt="Memory 7"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #ff6b6b, #4ecdc4)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 7</div>';"
+                        />
+                        <div class="memory-caption">First Day Adventures</div>
+                    </div>
+                    <div class="train-car" data-delay="2000">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.14_6f0f1119.jpg"
+                            alt="Memory 8"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #45b7d1, #96ceb4)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 8</div>';"
+                        />
+                        <div class="memory-caption">Lunchtime Giggles</div>
+                    </div>
+                    <div class="train-car" data-delay="4000">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.15_99d7dbf4.jpg"
+                            alt="Memory 9"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #feca57, #ff6b6b)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 9</div>';"
+                        />
+                        <div class="memory-caption">Study Sessions</div>
+                    </div>
+                    <div class="train-car" data-delay="6000">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.08_835f803d.jpg"
+                            alt="Memory 10"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #4ecdc4, #45b7d1)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 10</div>';"
+                        />
+                        <div class="memory-caption">Weekend Fun</div>
+                    </div>
+                    <div class="train-car" data-delay="8000">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.12_2d33248e.jpg"
+                            alt="Memory 11"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #96ceb4, #feca57)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 11</div>';"
+                        />
+                        <div class="memory-caption">Secret Sharing</div>
+                    </div>
+                    <div class="train-car" data-delay="10000">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.12_8fc077e4.jpg"
+                            alt="Memory 12"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #ff6b6b, #96ceb4)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 12</div>';"
+                        />
+                        <div class="memory-caption">Growing Together</div>
+                    </div>
+                    <div class="train-car" data-delay="12000">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.13_281ac40a.jpg"
+                            alt="Memory 13"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #45b7d1, #feca57)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 13</div>';"
+                        />
+                        <div class="memory-caption">Forever Friends</div>
+                    </div>
+                    <div class="train-car" data-delay="14000">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.14_5f9a5838.jpg"
+                            alt="Memory 14"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #4ecdc4, #ff6b6b)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;&quot;>Memory 14</div>';"
+                        />
+                        <div class="memory-caption">Unbreakable Bond</div>
+                    </div>
+                </div>
+
+                <div class="train-track"></div>
+            </div>
+
+            <div class="friendship-quote">
+                "bht log badle par tu nhi ...... bht ladai hui apne beech but
+                our friendship stood strong!!!!👭"
+            </div>
+        </div>
+
+        <!-- Page 3: More Memories -->
+        <div class="page page3" id="page3">
+            <div class="split-container">
+                <div class="split-left">
+                    <div class="big-picture">
+                        <img
+                            src="WhatsApp Image 2025-07-25 at 21.54.12_8fc077e4.jpg"
+                            alt="Special Memory"
+                            onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #f093fb, #f5576c)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:2rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);&quot;>Our Special Memory 💕</div>';"
+                        />
+                    </div>
+                </div>
+
+                <div class="split-right">
+                    <div class="full-para">
+                        From the silly selfies we took in class 4 to the
+                        countless adventures we've shared since then, every
+                        single moment has been a treasure. You've been there
+                        through my awkward phases, my biggest dreams, my worst
+                        days, and my happiest celebrations. Your friendship has
+                        been the constant thread weaving through all the
+                        chapters of my life.
+                        <br /><br />
+                        woh din bhi kitne ache the jab apn hamesha sath rehete
+                        the .... pata nhi kab aur kitni jaldi bade ho gayye...
+                        🌟💖"
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Special Moments -->
+        <div class="page page4" id="page4">
+            <!-- Top section with two pictures -->
+            <div class="top-section">
+                <div class="picture-container" style="animation-delay: 0.2s">
+                    <img
+                        src="WhatsApp Image 2025-07-25 at 21.54.13_488033e9.jpg"
+                        alt="Class 4 Memory"
+                        onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #4facfe, #00f2fe)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);&quot;>Class 4 Us 📚</div>';"
+                    />
+                    <div class="picture-label">Class 4 - The Beginning 📚</div>
+                </div>
+
+                <div class="connecting-line"></div>
+
+                <div class="picture-container" style="animation-delay: 0.4s">
+                    <img
+                        src="WhatsApp Image 2025-07-25 at 21.54.08_835f803d.jpg"
+                        alt="Present Day Memory"
+                        onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #00f2fe, #4facfe)'; this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);&quot;>Present Us 🌟</div>';"
+                    />
+                    <div class="picture-label">
+                        Present Day - Still Going Strong 🌟
+                    </div>
+                </div>
+            </div>
+
+            <!-- Before and After comparison -->
+            <div class="comparison-section">
+                <h2 class="comparison-title">Our Journey: Then vs Now 💫</h2>
+
+                <div class="comparison-content">
+                    <div class="before-section">
+                        <h3 class="section-header">Class 4 Us 👶</h3>
+                        <ul class="trait-list">
+                            <li class="trait-item">🎒 poore din sath rehena</li>
+                            <li class="trait-item">📝 tik tok baane se</li>
+                            <li class="trait-item">
+                                🎮 gali mei khelne se leke
+                            </li>
+                            <li class="trait-item">
+                                😊 love percentage discuss karne se leke
+                            </li>
+                            <li class="trait-item">
+                                📚 tum dono hamesha sath hi rehete ho?
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="vs-divider">
+                        <div class="vs-text">VS</div>
+                        <div class="heart-icon">💕</div>
+                    </div>
+
+                    <div class="after-section">
+                        <h3 class="section-header">Present Day Us 👸</h3>
+                        <ul class="trait-list">
+                            <li class="trait-item">
+                                ☕ kabhi kabhi phone pe baat hona
+                            </li>
+                            <li class="trait-item">📱 website banane tak</li>
+                            <li class="trait-item">
+                                ✈️ apne future ke sath khelne tak
+                            </li>
+                            <li class="trait-item">
+                                😂 love life discuss karne tak
+                            </li>
+                            <li class="trait-item">
+                                💪 tum dono kitne dino baad dikhi ek sath tak
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="friendship-quote"
+                style="
+                    position: relative;
+                    bottom: -30px;
+                    transform: none;
+                    left: auto;
+                    width: 90%;
+                    margin: 40px auto 20px auto;
+                "
+            >
+                " time ke sath bht kuch badla hai but ek sath chugli karna is
+                constant , ek doosre ko judge na karna is constant , ek doosre
+                ka sath dena is constant , ek doosre ke apne dushman manna is
+                constant 🧸✨"
+            </div>
+        </div>
+
+        <!-- Page 5: Final Video Page -->
+        <div class="page page5" id="page5">
+            <video class="video-background" autoplay muted loop playsinline>
+                <source
+                    src="WhatsApp Video 2025-07-25 at 21.54.11_08e02b3f.mp4"
+                    type="video/mp4"
+                />
+                <!-- Fallback for video not loading -->
+            </video>
+            <div class="moving-quote">
+                "Happy Birthday bitch, tu sach mei bht wafadar hai tune kabhi
+                sath nahi chora , mere hur ego , gusse ko hamesha ignore karke
+                tune apni friendhip dekhi ........thank u bitch sabke ke liye
+                🎂🎉💕"
+            </div>
+        </div>
+
+        <script>
+            let currentPage = 1;
+            const totalPages = 5;
+
+            // Emoji configurations for each page
+            const pageEmojis = {
+                1: ["🎉", "🌟", "✨", "🎂", "🎈", "💖"],
+                2: ["👭", "💕", "🌸", "🦋", "💝", "🌺"],
+                3: ["💫", "🌈", "🎀", "💐", "🌷", "🦄"],
+                4: ["🧸", "✨", "🎁", "💖", "🌙", "⭐"],
+                5: ["💕", "🎉", "✨", "💫", "🌟", "💖"],
+            };
+
+            // Function to create and animate emojis
+            function createEmoji(pageNum) {
+                const emojis = pageEmojis[pageNum];
+                const emoji = document.createElement("div");
+                emoji.className = "emoji";
+                emoji.textContent =
+                    emojis[Math.floor(Math.random() * emojis.length)];
+
+                // Random position
+                emoji.style.left = Math.random() * 90 + "%";
+                emoji.style.top = Math.random() * 90 + "%";
+
+                // Random animation delay
+                emoji.style.animationDelay = Math.random() * 2 + "s";
+
+                document.getElementById(`page${pageNum}`).appendChild(emoji);
+
+                // Remove emoji after animation
                 setTimeout(() => {
-                    car.classList.add('visible');
-                }, delay);
-            });
-        }
-
-        // Function to reset train slideshow
-        function resetTrainSlideshow() {
-            const trainCars = document.querySelectorAll('#train-container .train-car');
-            const progressBar = document.getElementById('progress-bar-2');
-            
-            trainCars.forEach(car => {
-                car.classList.remove('visible');
-            });
-            
-            if (progressBar) {
-                progressBar.style.animation = 'none';
-                progressBar.offsetHeight; // Trigger reflow
-                progressBar.style.animation = null;
-            }
-        }
-        
-        // Function to check if images are loaded and handle errors
-        function checkAndFixImages() {
-            const allImages = document.querySelectorAll('img');
-            allImages.forEach(img => {
-                if (!img.complete || img.naturalHeight === 0) {
-                    // Image failed to load
-                    const parent = img.parentElement;
-                    if (parent.classList.contains('train-car')) {
-                        parent.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
-                        parent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;">Memory</div>';
-                    } else if (parent.classList.contains('photo-item')) {
-                        img.style.display = 'none';
-                        parent.style.background = 'linear-gradient(45deg, #4facfe, #00f2fe)';
-                    } else if (parent.classList.contains('big-picture')) {
-                        parent.style.background = 'linear-gradient(45deg, #f093fb, #f5576c)';
-                        parent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:2rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);">Our Special Memory 💕</div>';
-                    } else if (parent.classList.contains('picture-container')) {
-                        parent.style.background = 'linear-gradient(45deg, #4facfe, #00f2fe)';
-                        parent.innerHTML += '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);">Our Memory 📚</div>';
+                    if (emoji.parentNode) {
+                        emoji.parentNode.removeChild(emoji);
                     }
+                }, 3000);
+            }
+
+            // Function to start emoji animation for a page
+            function startEmojiAnimation(pageNum) {
+                // Create initial emojis
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => createEmoji(pageNum), i * 400);
                 }
-            });
-            
-            // Check if video loaded correctly
-            const video = document.querySelector('.video-background');
-            if (video) {
-                video.addEventListener('error', function() {
-                    this.style.display = 'none';
-                    document.querySelector('.page5').style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+
+                // Continue creating emojis periodically
+                const emojiInterval = setInterval(() => {
+                    if (currentPage === pageNum) {
+                        createEmoji(pageNum);
+                    } else {
+                        clearInterval(emojiInterval);
+                    }
+                }, 800);
+            }
+
+            // Function to start train slideshow on page 2
+            function startTrainSlideshow() {
+                const trainCars = document.querySelectorAll(
+                    "#train-container .train-car"
+                );
+                const progressBar = document.getElementById("progress-bar-2");
+
+                if (progressBar) {
+                    progressBar.style.animation = "progressFill 16s linear";
+                }
+
+                trainCars.forEach((car, index) => {
+                    const delay = parseInt(car.getAttribute("data-delay"));
+                    setTimeout(() => {
+                        car.classList.add("visible");
+                    }, delay);
                 });
             }
-        }
 
-        // Function to change pages
-        function nextPage() {
-            if (currentPage < totalPages) {
-                // Hide current page
-                document.getElementById(`page${currentPage}`).classList.remove('active');
-                
-                // Reset train slideshow if leaving page 2
-                if (currentPage === 2) {
-                    resetTrainSlideshow();
+            // Function to reset train slideshow
+            function resetTrainSlideshow() {
+                const trainCars = document.querySelectorAll(
+                    "#train-container .train-car"
+                );
+                const progressBar = document.getElementById("progress-bar-2");
+
+                trainCars.forEach((car) => {
+                    car.classList.remove("visible");
+                });
+
+                if (progressBar) {
+                    progressBar.style.animation = "none";
+                    progressBar.offsetHeight; // Trigger reflow
+                    progressBar.style.animation = null;
                 }
-                
-                // Show next page
-                currentPage++;
-                document.getElementById(`page${currentPage}`).classList.add('active');
-                document.getElementById('current-page').textContent = currentPage;
-                
-                // Start appropriate animations for new page
-                if (currentPage === 2) {
-                    setTimeout(() => {
-                        startEmojiAnimation(currentPage);
-                        startTrainSlideshow();
-                    }, 300);
-                } else if (currentPage <= 4) {
+            }
+
+            // Function to check if images are loaded and handle errors
+            function checkAndFixImages() {
+                const allImages = document.querySelectorAll("img");
+                allImages.forEach((img) => {
+                    if (!img.complete || img.naturalHeight === 0) {
+                        // Image failed to load
+                        const parent = img.parentElement;
+                        if (parent.classList.contains("train-car")) {
+                            parent.style.background =
+                                "linear-gradient(45deg, #ff6b6b, #4ecdc4)";
+                            parent.innerHTML =
+                                '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:white;font-weight:bold;">Memory</div>';
+                        } else if (parent.classList.contains("photo-item")) {
+                            img.style.display = "none";
+                            parent.style.background =
+                                "linear-gradient(45deg, #4facfe, #00f2fe)";
+                        } else if (parent.classList.contains("big-picture")) {
+                            parent.style.background =
+                                "linear-gradient(45deg, #f093fb, #f5576c)";
+                            parent.innerHTML =
+                                '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:2rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);">Our Special Memory 💕</div>';
+                        } else if (
+                            parent.classList.contains("picture-container")
+                        ) {
+                            parent.style.background =
+                                "linear-gradient(45deg, #4facfe, #00f2fe)";
+                            parent.innerHTML +=
+                                '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,0.5);">Our Memory 📚</div>';
+                        }
+                    }
+                });
+
+                // Check if video loaded correctly
+                const video = document.querySelector(".video-background");
+                if (video) {
+                    video.addEventListener("error", function () {
+                        this.style.display = "none";
+                        document.querySelector(".page5").style.background =
+                            "linear-gradient(45deg, #667eea, #764ba2)";
+                    });
+                }
+            }
+
+            // Function to change pages
+            function nextPage() {
+                if (currentPage < totalPages) {
+                    // Hide current page
+                    document
+                        .getElementById(`page${currentPage}`)
+                        .classList.remove("active");
+
+                    // Reset train slideshow if leaving page 2
+                    if (currentPage === 2) {
+                        resetTrainSlideshow();
+                    }
+
+                    // Show next page
+                    currentPage++;
+                    document
+                        .getElementById(`page${currentPage}`)
+                        .classList.add("active");
+                    document.getElementById("current-page").textContent =
+                        currentPage;
+                    
+                    // Scroll to top of the new page
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+
+                    // Start appropriate animations for new page
+                    if (currentPage === 2) {
+                        setTimeout(() => {
+                            startEmojiAnimation(currentPage);
+                            startTrainSlideshow();
+                        }, 300);
+                    } else if (currentPage <= 4) {
+                        setTimeout(() => startEmojiAnimation(currentPage), 300);
+                    }
+                } else {
+                    // Reset to first page
+                    document
+                        .getElementById(`page${currentPage}`)
+                        .classList.remove("active");
+
+                    // Reset train slideshow if leaving page 2
+                    if (currentPage === 2) {
+                        resetTrainSlideshow();
+                    }
+
+                    currentPage = 1;
+                    document
+                        .getElementById(`page${currentPage}`)
+                        .classList.add("active");
+                    document.getElementById("current-page").textContent =
+                        currentPage;
                     setTimeout(() => startEmojiAnimation(currentPage), 300);
                 }
-            } else {
-                // Reset to first page
-                document.getElementById(`page${currentPage}`).classList.remove('active');
-                
-                // Reset train slideshow if leaving page 2
-                if (currentPage === 2) {
-                    resetTrainSlideshow();
-                }
-                
-                currentPage = 1;
-                document.getElementById(`page${currentPage}`).classList.add('active');
-                document.getElementById('current-page').textContent = currentPage;
-                setTimeout(() => startEmojiAnimation(currentPage), 300);
             }
-        }
 
-        // Add click event listener to body
-        document.body.addEventListener('click', nextPage);
-
-        // Start emoji animation for first page
-        setTimeout(() => startEmojiAnimation(1), 500);
-
-        // Handle video error gracefully
-        const videoBackground = document.querySelector('.video-background');
-        if (videoBackground) {
-            videoBackground.addEventListener('error', function() {
-                this.style.display = 'none';
-                document.querySelector('.page5').classList.add('video-fallback');
-            });
+            // Add click event listener to body
+            document.body.addEventListener("click", nextPage);
             
-            // Additional check for video loading
-            videoBackground.addEventListener('loadeddata', function() {
-                console.log('Video loaded successfully');
-                
-                // Check video dimensions and adjust if needed
-                if (this.videoWidth > window.innerWidth * 1.5) {
-                    this.style.width = '100%';
-                    this.style.height = 'auto';
-                    this.style.maxHeight = '80vh';
-                }
-                
-                // Center video if it's smaller than container
-                if (this.videoHeight < window.innerHeight) {
-                    this.style.top = '50%';
-                    this.style.transform = 'translateY(-50%)';
+            // Add keyboard navigation (arrow keys)
+            document.addEventListener("keydown", (e) => {
+                if (e.code === "ArrowRight" || e.code === "Space") {
+                    nextPage();
                 }
             });
-            
-            // Fallback if video doesn't load within 5 seconds
-            setTimeout(() => {
-                if (videoBackground.readyState < 3) { // HAVE_FUTURE_DATA = 3
-                    videoBackground.style.display = 'none';
-                    document.querySelector('.page5').classList.add('video-fallback');
-                }
-            }, 5000);
-        }
 
-        // Preload images for better performance
-        function preloadImages() {
-            // Preload numbered photos
-            for (let i = 1; i <= 32; i++) {
-                const img = new Image();
-                img.src = `photo${i}.jpg`;
+            // Add swipe support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            document.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+            
+            document.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    // Swipe left
+                    nextPage();
+                }
             }
-            
-            // Preload WhatsApp images
-            const imagePaths = [
-                "WhatsApp Image 2025-07-25 at 21.54.08_835f803d.jpg",
-                "WhatsApp Image 2025-07-25 at 21.54.12_2d33248e.jpg",
-                "WhatsApp Image 2025-07-25 at 21.54.12_718fdfe3.jpg",
-                "WhatsApp Image 2025-07-25 at 21.54.12_8fc077e4.jpg",
-                "WhatsApp Image 2025-07-25 at 21.54.13_281ac40a.jpg",
-                "WhatsApp Image 2025-07-25 at 21.54.13_488033e9.jpg",
-                "WhatsApp Image 2025-07-25 at 21.54.14_5f9a5838.jpg",
-                "WhatsApp Image 2025-07-25 at 21.54.14_6f0f1119.jpg",
-                "WhatsApp Image 2025-07-25 at 21.54.15_99d7dbf4.jpg"
-            ];
-            
-            imagePaths.forEach(path => {
-                const img = new Image();
-                img.src = path;
-            });
-            
-            // Preload video
-            const video = document.createElement('video');
-            video.preload = 'auto';
-            video.src = "WhatsApp Video 2025-07-25 at 21.54.11_08e02b3f.mp4";
-        }
 
-        // Initialize
-        window.addEventListener('load', () => {
-            preloadImages();
-            checkAndFixImages();
-            
-            // Set initial page
-            document.getElementById('page1').classList.add('active');
-            document.getElementById('current-page').textContent = '1';
+            // Start emoji animation for first page
             setTimeout(() => startEmojiAnimation(1), 500);
-        });
 
-        // Prevent context menu and text selection for better user experience
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('selectstart', e => e.preventDefault());
-    </script>
-</body>
+            // Handle video error gracefully
+            const videoBackground = document.querySelector(".video-background");
+            if (videoBackground) {
+                videoBackground.addEventListener("error", function () {
+                    this.style.display = "none";
+                    document
+                        .querySelector(".page5")
+                        .classList.add("video-fallback");
+                });
+
+                // Additional check for video loading
+                videoBackground.addEventListener("loadeddata", function () {
+                    console.log("Video loaded successfully");
+
+                    // Check video dimensions and adjust if needed
+                    if (this.videoWidth > window.innerWidth * 1.5) {
+                        this.style.width = "100%";
+                        this.style.height = "auto";
+                        this.style.maxHeight = "80vh";
+                    }
+
+                    // Center video if it's smaller than container
+                    if (this.videoHeight < window.innerHeight) {
+                        this.style.top = "50%";
+                        this.style.transform = "translateY(-50%)";
+                    }
+                });
+
+                // Fallback if video doesn't load within 5 seconds
+                setTimeout(() => {
+                    if (videoBackground.readyState < 3) {
+                        // HAVE_FUTURE_DATA = 3
+                        videoBackground.style.display = "none";
+                        document
+                            .querySelector(".page5")
+                            .classList.add("video-fallback");
+                    }
+                }, 5000);
+            }
+
+            // Preload images for better performance
+            function preloadImages() {
+                // Preload numbered photos
+                for (let i = 1; i <= 32; i++) {
+                    const img = new Image();
+                    img.src = `photo${i}.jpg`;
+                }
+
+                // Preload WhatsApp images
+                const imagePaths = [
+                    "WhatsApp Image 2025-07-25 at 21.54.08_835f803d.jpg",
+                    "WhatsApp Image 2025-07-25 at 21.54.12_2d33248e.jpg",
+                    "WhatsApp Image 2025-07-25 at 21.54.12_718fdfe3.jpg",
+                    "WhatsApp Image 2025-07-25 at 21.54.12_8fc077e4.jpg",
+                    "WhatsApp Image 2025-07-25 at 21.54.13_281ac40a.jpg",
+                    "WhatsApp Image 2025-07-25 at 21.54.13_488033e9.jpg",
+                    "WhatsApp Image 2025-07-25 at 21.54.14_5f9a5838.jpg",
+                    "WhatsApp Image 2025-07-25 at 21.54.14_6f0f1119.jpg",
+                    "WhatsApp Image 2025-07-25 at 21.54.15_99d7dbf4.jpg",
+                ];
+
+                imagePaths.forEach((path) => {
+                    const img = new Image();
+                    img.src = path;
+                });
+
+                // Preload video
+                const video = document.createElement("video");
+                video.preload = "auto";
+                video.src =
+                    "WhatsApp Video 2025-07-25 at 21.54.11_08e02b3f.mp4";
+            }
+
+            // Initialize
+            window.addEventListener("load", () => {
+                preloadImages();
+                checkAndFixImages();
+                
+                // Add visible navigation hints for mobile
+                addNavigationHints();
+
+                // Set initial page
+                document.getElementById("page1").classList.add("active");
+                document.getElementById("current-page").textContent = "1";
+                setTimeout(() => startEmojiAnimation(1), 500);
+                
+                // Check if it's a mobile device
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    // Add touch instructions
+                    showMobileInstructions();
+                }
+            });
+            
+            // Function to add navigation hints
+            function addNavigationHints() {
+                const navHint = document.createElement('div');
+                navHint.className = 'nav-hint';
+                navHint.innerHTML = 'Click anywhere or swipe left to continue →';
+                navHint.style.position = 'fixed';
+                navHint.style.bottom = '20px';
+                navHint.style.left = '0';
+                navHint.style.right = '0';
+                navHint.style.textAlign = 'center';
+                navHint.style.color = 'white';
+                navHint.style.fontSize = '0.9rem';
+                navHint.style.padding = '10px';
+                navHint.style.background = 'rgba(0,0,0,0.5)';
+                navHint.style.zIndex = '1000';
+                navHint.style.animation = 'fadeInOut 2s infinite';
+                navHint.style.pointerEvents = 'none';
+                
+                // Create the animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes fadeInOut {
+                        0%, 100% { opacity: 0.3; }
+                        50% { opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+                document.body.appendChild(navHint);
+                
+                // Hide after 5 seconds
+                setTimeout(() => {
+                    navHint.style.opacity = '0';
+                    navHint.style.transition = 'opacity 1s';
+                    setTimeout(() => {
+                        if (navHint.parentNode) {
+                            navHint.parentNode.removeChild(navHint);
+                        }
+                    }, 1000);
+                }, 5000);
+            }
+            
+            // Function to show mobile-specific instructions
+            function showMobileInstructions() {
+                const instructionBox = document.createElement('div');
+                instructionBox.className = 'mobile-instructions';
+                instructionBox.innerHTML = '<div>Tap anywhere or swipe left to navigate</div>';
+                instructionBox.style.position = 'fixed';
+                instructionBox.style.top = '50%';
+                instructionBox.style.left = '50%';
+                instructionBox.style.transform = 'translate(-50%, -50%)';
+                instructionBox.style.background = 'rgba(0,0,0,0.8)';
+                instructionBox.style.color = 'white';
+                instructionBox.style.padding = '20px';
+                instructionBox.style.borderRadius = '15px';
+                instructionBox.style.zIndex = '9999';
+                instructionBox.style.textAlign = 'center';
+                instructionBox.style.fontSize = '1.2rem';
+                
+                document.body.appendChild(instructionBox);
+                
+                setTimeout(() => {
+                    instructionBox.style.opacity = '0';
+                    instructionBox.style.transition = 'opacity 1s';
+                    setTimeout(() => {
+                        if (instructionBox.parentNode) {
+                            instructionBox.parentNode.removeChild(instructionBox);
+                        }
+                    }, 1000);
+                }, 2500);
+            }
+
+            // Prevent context menu and text selection for better user experience
+            document.addEventListener("contextmenu", (e) => e.preventDefault());
+            document.addEventListener("selectstart", (e) => e.preventDefault());
+        </script>
+    </body>
 </html>
